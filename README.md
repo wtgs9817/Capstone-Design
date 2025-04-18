@@ -56,6 +56,10 @@
  
 ## 📖 ERD
 
+https://www.erdcloud.com/d/GY9Xrhxdv5uLzPhDA
+
+<br />
+
 ![image](https://github.com/user-attachments/assets/d3d16672-8e2c-4010-8cc9-e262fb7ad298)
 
  
