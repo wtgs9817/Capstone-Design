@@ -50,7 +50,8 @@
 
 ## 🔦 프로젝트 아키텍쳐
 
-![프로젝트_아키텍처 drawio](https://github.com/user-attachments/assets/0e39fab2-9723-4e60-9173-c6aa028593d5)
+![image](https://github.com/user-attachments/assets/58340306-d345-4a1d-aee1-b0c05ce2ac2d)
+
 
 
  <br />
