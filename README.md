@@ -1,6 +1,9 @@
 # 🧑‍🎓 Capstone-Design
 (한림대학교 졸업작품) 한림대학교 정보과학대학 소프트웨어학부 웹애플리케이션 (진행중) 25.03.05 ~
 
+#
+작업용 github 주소 : https://github.com/mins8578/Capstone-Design
+
 ## 📋 운영 방법 및 규정
 
 <br />
