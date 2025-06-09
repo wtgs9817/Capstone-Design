@@ -46,9 +46,9 @@
 - Figma (와이어프레임 설계)
 
 ### 🧠 Backend
-- Spring Boot (Java)
+- Java
+- Spring Boot 
 - Spring Data JPA
-- Embedded Tomcat
 
 ### 🗄️ Database
 - MySQL
@@ -58,6 +58,7 @@
 ### 🌐 인프라 / 배포
 - AWS EC2 (서버 배포)
 - Nginx (리버스 프록시 & 정적 리소스 서빙)
+- Docker (개발 환경 컨테이너화)
 
 ### 🧰 기타 도구
 - GitHub (협업 및 버전 관리)
