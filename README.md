@@ -111,8 +111,9 @@
   <img src="https://github.com/user-attachments/assets/b247929d-45a5-48d6-b136-6027ceda93ef" width="90%" />
 </p>
 
-- "현재 이수 과목 등록/수정" 버튼을 눌러 이수한 과목을 체크한 뒤 저장할 수 있다.  
+- "현재 이수 과목 등록" 버튼을 눌러 이수한 과목을 체크한 뒤 저장할 수 있다.  
 - 저장된 과목 정보를 바탕으로 졸업 자가진단 결과를 확인할 수 있다.
+- 과목 정보를 수정할 경우, 선택된 과목을 해제한 후 다시 저장하면 반영이 되며, 새로운 과목 추가 시에는 해당 과목을 선택하고 저장 버튼을 클릭하면 등록된다.
 
 <p align="center">
   <img src="https://github.com/user-attachments/assets/0bfa3662-6796-495f-9c1b-3f2ebc757f28" width="90%" />
