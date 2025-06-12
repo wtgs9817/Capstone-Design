@@ -74,7 +74,8 @@
 ---
 
 ### 프로젝트 구조도
-![캡스톤 디자인_수정본](https://github.com/user-attachments/assets/d13f0fbb-222d-4f4d-8ba6-b4c965b55632)
+![캡스톤디자인_최종](https://github.com/user-attachments/assets/246a0f77-fe4d-4e29-9cfa-97887b4302da)
+
 
 ---
 
