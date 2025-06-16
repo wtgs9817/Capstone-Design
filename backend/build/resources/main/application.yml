@@ -1,3 +1,7 @@
+server:
+  address: 0.0.0.0
+
+
 spring:
   datasource:
     driver-class-name: com.mysql.cj.jdbc.Driver
@@ -28,10 +32,29 @@ spring:
   logging:
     level:
       org.springframework.mail: DEBUG
+      org.springframework.security: DEBUG
+      org.springframework.security.web.FilterChainProxy: DEBUG
+      org.springframework.boot.actuate.endpoint.web: DEBUG
 
-  server:
-    address: 0.0.0.0
+
 
   mvc:
     pathmatch:
       matching-strategy: ant_path_matcher  # ✅ 추가된 부분
+
+
+management:
+  server:
+    port: 9999
+  endpoints:
+    web:
+      exposure:
+        include: health, info, prometheus
+      base-path: /manage
+  endpoint:
+    prometheus:
+      enabled: true
+  metrics:
+    export:
+      prometheus:
+        enabled: true

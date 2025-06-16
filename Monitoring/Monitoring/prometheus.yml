@@ -1,0 +1,12 @@
+global:
+  scrape_interval: 5s
+
+scrape_configs:
+  - job_name: 'springboot'
+    metrics_path: '/manage/prometheus'
+    static_configs:
+      - targets: ['backend:9999']
+
+  - job_name: 'nginx'
+    static_configs:
+      - targets: ['nginx-exporter:9113']

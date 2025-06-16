@@ -8,6 +8,18 @@ services:
     networks:
       - capston-design-network
 
+
+  nginx-exporter:
+    image: nginx/nginx-prometheus-exporter:latest
+    container_name: nginx-exporter
+    command:
+      - "-nginx.scrape-uri=http://frontend:80/nginx_status"
+    ports:
+      - "9113:9113"
+    networks:
+      - capston-design-network
+
+
 networks:
   capston-design-network:
     external: true

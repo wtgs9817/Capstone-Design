@@ -20,9 +20,18 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
     // Http 요청이 들어오면 가장 먼저 거치는 filter
     @Override
     public void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws IOException, ServletException {
+        String uri = request.getRequestURI();
+
+        logger.info("요청 URI: " + uri);
+
+        // manage 접근은 필터 건너뜀
+        if (uri != null && uri.startsWith("/manage")) {
+            filterChain.doFilter(request, response);
+            return;
+        }
+
         // Header에서 Token 가져오기
         String token = jwtProvider.resolveToken(request);
-
 
 
 
@@ -36,6 +45,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         }
         else {
             logger.info("❌ 인증 실패");
+            SecurityContextHolder.clearContext();
         }
 
         filterChain.doFilter(request, response); // 다음 filter 실행

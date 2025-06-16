@@ -64,17 +64,6 @@
 
 ---
 
-### 프로젝트 구조도
-![캡스톤 디자인_수정본](https://github.com/user-attachments/assets/d13f0fbb-222d-4f4d-8ba6-b4c965b55632)
-
----
-
-### ERD
-![image](https://github.com/user-attachments/assets/5a7ae3d4-05db-40f0-9717-511959af14c8)
-
----
-
-
 ### 🎉 메인화면
 
 <p align="center">
