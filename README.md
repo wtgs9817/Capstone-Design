@@ -45,7 +45,8 @@
   자유로운 질의응답 및 경험 공유 공간
 
 - **🖥️ 모니터링 시스템** <br/>
- Spring Boot Actuator 기반의 메트릭을 Prometheus에서 수집하고, Grafana 대시보드를 통해 실시간으로 애플리케이션 상태를 시각화하여 문제 발생 시 신속히 대응할 수 있도록 구축
+Spring Boot Actuator, Nginx exporter, Node exporter 기반 메트릭을 prometheus로 수집하고, Granfana 를 통해 시각화
+정상 범위를 벗어난 상태 정보을 바로 인지하여 문제해결을 할 수 있도록 설계
    
 ---
 
@@ -73,6 +74,8 @@
 
 ### 🖥️ Monitoring
 -  Spring Boot Actuator
+-  nginx exporter
+-  node exporter
 -  prometheus
 -  grafana
 
@@ -91,7 +94,8 @@
 ---
 
 ### 모니터링 구조도
-![캡스톤디자인_모니터링_아키텍쳐](https://github.com/user-attachments/assets/6c5dfcac-af99-41ea-9385-e9697e3a3128)
+![캡스톤디자인_모니터링_아키텍쳐](https://github.com/user-attachments/assets/c135aa9c-2c10-4efe-a9c8-1df3ea8da31f)
+
 
 
 
@@ -160,20 +164,15 @@
 
 ---
 
-### 📢 공지사항 페이지
-
-<p align="center">
-  <img src="https://github.com/user-attachments/assets/84ce3c07-969d-4749-bd78-2399cff9d27e" width="90%" />
-</p>
-
-- 소프트웨어학부 공식 홈페이지의 공지사항과 연동시켜 "공지사항" 탭 클릭시 이동한다.
-
----
 
 ### 🖥️ 모니터링 화면
+**NGINX**
+![image](https://github.com/user-attachments/assets/20f440fe-967e-4bb4-895a-6fa90f44902b)
 
-![image](https://github.com/user-attachments/assets/769468a0-585d-455d-9df8-384f6784c205) 
 
+**Spring Boot**
+![image](https://github.com/user-attachments/assets/d0547b47-c53e-4c9f-a75d-f296468d1c1f)
+ 
 
 
 ---
