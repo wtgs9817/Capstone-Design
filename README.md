@@ -99,7 +99,8 @@ grafana로 시각화하여 정상 범위를 벗어난 이상 징후를 실시간
 ---
 
 ### 모니터링 구조도
-![캡스톤디자인_모니터링_아키텍쳐](https://github.com/user-attachments/assets/c135aa9c-2c10-4efe-a9c8-1df3ea8da31f)
+![캡스톤디자인_모니터링_아키텍쳐](https://github.com/user-attachments/assets/4578488e-06d5-43ec-8c41-95b9904ed540)
+
 
 
 
