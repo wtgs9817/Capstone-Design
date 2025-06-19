@@ -1,23 +1,20 @@
 package com.example.Capstone_Design.controller;
 
 
-import com.example.Capstone_Design.Exception.UserNotFoundException;
+
 import com.example.Capstone_Design.dto.*;
-import com.example.Capstone_Design.entity.StudentSubjectEntity;
-import com.example.Capstone_Design.entity.UserEntity;
-import com.example.Capstone_Design.repository.StudentSubjectRepository;
 import com.example.Capstone_Design.service.GraduationCheckService;
 import com.example.Capstone_Design.service.UserService;
 
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.HttpStatus;
+
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.*;
-import java.util.stream.Collectors;
+
 
 @RestController
 @RequestMapping("/api")
@@ -100,7 +97,7 @@ public class GraduationCheckController {
     }
 
     //선택한 과목 저장
-    @PostMapping("/subjects")
+    @PutMapping("/subjects")
     public ResponseEntity<?> subjectSave(@AuthenticationPrincipal UserDetails userDetails, @RequestBody SubjectListRequest request) {
 
         String userID = userDetails.getUsername();

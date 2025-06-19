@@ -21,11 +21,7 @@ import org.springframework.ui.Model;
 
 import java.beans.Transient;
 import java.time.LocalDateTime;
-import java.util.List;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Optional;
-import java.util.UUID;
+import java.util.*;
 
 import lombok.extern.slf4j.Slf4j;
 @Slf4j
@@ -58,7 +54,7 @@ public class UserController {
         }
 
         userService.save(userDTO);
-        return ResponseEntity.ok("회원가입 성공");
+        return ResponseEntity.ok( Collections.singletonMap("message","회원가입 성공") );
     }
 
 
@@ -140,9 +136,10 @@ public class UserController {
 
 
     @GetMapping("/user/me")
-    public ResponseEntity<UserDTO> getCurrentUser(@AuthenticationPrincipal UserDetails userDetails) {
+    public ResponseEntity<?> getCurrentUser(@AuthenticationPrincipal UserDetails userDetails) {
         UserEntity user = userRepository.findByUserID(userDetails.getUsername()).orElseThrow();
         UserDTO userDTO = UserDTO.toUserDTO(user);
+
         return ResponseEntity.ok(userDTO);
     }
 }

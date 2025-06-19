@@ -81,7 +81,7 @@ const SubjectModal = ({ onClose, isOpen }) => {
         .filter(([_, isChecked]) => isChecked)
         .map(([subject]) => subject.trim());
 
-      await axios.post('/api/subjects', { subjects: selectedList }, {
+      await axios.put('/api/subjects', { subjects: selectedList }, {
         headers: { Authorization: `Bearer ${token}` }
       });
 

@@ -17,6 +17,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDateTime;
 import java.time.ZoneId;
+import java.util.Collections;
 import java.util.List;
 
 @RestController
@@ -72,6 +73,8 @@ public class BoardController {
     public ResponseEntity<?> updateBoard(@PathVariable Long id,
                                          @RequestBody BoardEntity updatedBoard,
                                          @AuthenticationPrincipal UserDetails userDetails) {
+
+
         if (userDetails == null) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("로그인이 필요합니다.");
         }
@@ -82,15 +85,17 @@ public class BoardController {
         UserEntity user = userRepository.findByUserID(userDetails.getUsername())
                 .orElseThrow(() -> new RuntimeException("사용자 정보가 없습니다."));
 
+
         if (!board.getUser().getUserID().equals(user.getUserID())) {
             return ResponseEntity.status(HttpStatus.FORBIDDEN).body("작성자만 수정할 수 있습니다.");
         }
 
+
         board.setTitle(updatedBoard.getTitle());
         board.setContent(updatedBoard.getContent());
         board.setUpdatedAt(LocalDateTime.now(SEOUL_ZONE));
-
-        return ResponseEntity.ok(boardRepository.save(board));
+        boardRepository.save(board);
+        return ResponseEntity.ok(Collections.singletonMap("message", "게시글 수정 완료"));
     }
 
     // ✅ 게시글 삭제
