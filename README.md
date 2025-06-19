@@ -108,10 +108,21 @@ grafana로 시각화하여 정상 범위를 벗어난 이상 징후를 실시간
 ---
 
 ### ERD
+https://www.erdcloud.com/d/GY9Xrhxdv5uLzPhDA
+
 ![image](https://github.com/user-attachments/assets/5a7ae3d4-05db-40f0-9717-511959af14c8)
 
 ---
+### API 명세서
+https://www.notion.so/215093794d9780af93a5c95188562951?v=215093794d978017b619000c8b379007&source=copy_link
 
+![image](https://github.com/user-attachments/assets/f8991569-103a-43b9-be07-699efe374029)
+
+
+
+
+
+---
 
 ### 🎉 메인화면
 
