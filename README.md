@@ -49,8 +49,8 @@
   자유로운 질의응답 및 경험 공유 공간
 
 - **🖥️ 모니터링 시스템** <br/>
-Spring Boot Actuator, Nginx exporter, Node exporter 기반 메트릭을 prometheus로 수집하고, Granfana를 통해 시각화하여 <br />
-정상 범위를 벗어난 상태 정보를 바로 인지하여 문제해결을 할 수 있도록 설계
+Spring Boot Actuator, Nginx exporter, Node exporter 기반 시계열 메트릭을 prometheus로 수집 <br />
+grafana로 시각화하여 정상 범위를 벗어난 이상 징후를 실시간으로 인지하고 문제해결을 할 수 있도록 설계
    
 ---
 
