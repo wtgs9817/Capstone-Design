@@ -3,9 +3,13 @@
 한림대학교 정보과학대학 소프트웨어학부 학생들을 위한  
 졸업 자가진단 및 정보 커뮤니티 플랫폼입니다.
 
-25/06/16 - Spring Boot 모니터링 시스템 추가(prometheus + grafana)
 
 ---
+### ⭐ update
+- 25/06/16 - Spring Boot 모니터링 시스템 추가(prometheus + grafana)
+
+---
+
 ### ⏳ 개발 기간
 - 2025년 3월 ~ 2025년 5월 (총 2개월)
 
@@ -73,11 +77,11 @@ Spring Boot Actuator, Nginx exporter, Node exporter 기반 메트릭을 promethe
 - Docker (개발 환경 컨테이너화)
 
 ### 🖥️ Monitoring
--  Spring Boot Actuator
--  nginx exporter
--  node exporter
--  prometheus
--  grafana
+-  Spring Boot Actuator (애플리케이션 레벨 메트릭 수집)
+-  nginx exporter (Nginx 웹 서버 상태 정보 수집)
+-  node exporter (서버의 자원 메트릭 수집)
+-  prometheus  (시계열 메트릭 수집 및 저장)
+-  grafana  (수집한 메트릭 시각화)
 
 ### 🧰 기타 도구
 - GitHub (협업 및 버전 관리)
@@ -167,14 +171,16 @@ Spring Boot Actuator, Nginx exporter, Node exporter 기반 메트릭을 promethe
 
 ### 🖥️ 모니터링 화면
 **NGINX**
-![image](https://github.com/user-attachments/assets/20f440fe-967e-4bb4-895a-6fa90f44902b)
+![image](https://github.com/user-attachments/assets/8ed8ee1a-2d6b-47c7-a27f-555489455860)
+
 
 
 **Spring Boot**
 ![image](https://github.com/user-attachments/assets/d0547b47-c53e-4c9f-a75d-f296468d1c1f)
  
+- CPU 사용률, 네트워크 트래픽, HTTP 요청 응답 상태 등의 시계열 메트릭을 실시간으로 시각화하고 모니터링함으로써, 비정상적인 수치나 연결 요청 실패 등 이상징후를 조기에 탐지하고 빠르게 대처할 수 있도록 구성
 
-
+  
 ---
 
 ### 👍 이전 프로젝트 대비 개선점
