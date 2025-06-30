@@ -127,7 +127,7 @@ https://www.notion.so/215093794d9780af93a5c95188562951?v=215093794d978017b619000
 
 ---
 
-### 회원가입
+### 👤 회원가입
 <p align="center">
   <img src="https://github.com/user-attachments/assets/106a8ace-4749-4347-ac80-2114ac148881" width="90%" />
 </p>
