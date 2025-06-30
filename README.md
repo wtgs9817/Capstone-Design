@@ -127,6 +127,16 @@ https://www.notion.so/215093794d9780af93a5c95188562951?v=215093794d978017b619000
 
 ---
 
+### 회원가입
+<p align="center">
+  <img src="https://github.com/user-attachments/assets/106a8ace-4749-4347-ac80-2114ac148881" width="90%" />
+</p>
+
+- 학교 이메일 기반 인증 코드 발송 및 검증 후 회원가입 진행한다. (학교 학생 외 가입 차단)
+
+---
+
+
 ### 🎉 메인화면
 
 <p align="center">
@@ -140,12 +150,12 @@ https://www.notion.so/215093794d9780af93a5c95188562951?v=215093794d978017b619000
 ### 🧑‍💻 로그인
 
 <p align="center">
-  <img src="https://github.com/user-attachments/assets/1fe8d737-c4b2-48eb-923b-45f750b506a3" width="90%" />
+  <img src="https://github.com/user-attachments/assets/1fe8d737-c4b2-48eb-923b-45f750b506a3" width="45%" />
 </p>
 
 - 사용자는 학교 이메일을 통해 본인 인증 후 회원가입을 진행한다.  
 - 가입 완료 후 로그인하여 서비스를 이용할 수 있다.
-- 로그인 시 JWT(Json Web Token) 이 발급되며, 인증이 필요한 요청에는 해당 토큰을 검증한 후 요청 처리
+- 로그인 시 JWT(Json Web Token) 이 생성되고, 클라이언트 localstorage 에 저장 (토큰 유효기간 1시간)
 - 토큰의 서명, 만료 시간, 사용자 ID 검증하여 토큰의 유효성을 판단  
 
 ---
