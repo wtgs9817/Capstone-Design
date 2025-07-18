@@ -83,6 +83,7 @@ const BoardDetailPage = () => {
     }
   };
 
+
   const handleCommentSubmit = async () => {
     if (!newComment.trim()) return alert("댓글을 입력하세요.");
     try {
@@ -219,7 +220,9 @@ const BoardDetailPage = () => {
               <>
                 <div className="comment-header">
                   <p><strong>{c.author}</strong> | {new Date(c.createdAt).toLocaleString("ko-KR", { timeZone: "Asia/Seoul" })}</p>
-                  {currentUser !== null && currentUser === c.authorId && (
+
+
+                  {currentUser !== null && currentUser === c.authorid && (
                     <div className="comment-actions">
                       <button onClick={() => startEdit(c.id, c.content)} className="edit-button">✏️ 수정</button>
                       <button onClick={() => handleDelete(c.id)} className="delete-button">🗑️ 삭제</button>

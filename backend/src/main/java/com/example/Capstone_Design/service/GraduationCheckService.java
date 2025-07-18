@@ -113,63 +113,58 @@ public class GraduationCheckService {
     @Transactional
     //과목 저장
     public boolean studentSubjectSave(String studentNumber, List<String> subjectNames) {
-        try {
-            //프론트에서 받아온 저장하기 위한 과목
-            List<SubjectEntity> subjectEntities = subjectRepository.findAllBySubjectNameIn(subjectNames);
 
-            //현재 db에 저장되어 있는 수강과목
-            List<String> subjectCheckList = studentSubjectRepository.getSubjects(studentNumber).stream()
-                    .map(GraduationCheckDTO::getSubjectName)
-                    .collect(Collectors.toList());
+        //프론트에서 받아온 저장하기 위한 과목
+        List<SubjectEntity> subjectEntities = subjectRepository.findAllBySubjectNameIn(subjectNames);
+
+        //현재 db에 저장되어 있는 수강과목
+        List<String> subjectCheckList = studentSubjectRepository.getSubjects(studentNumber).stream()
+                .map(GraduationCheckDTO::getSubjectName)
+                .collect(Collectors.toList());
+
+        //삭제하려고 하는 과목
+        List<String> subjectDelete = subjectCheckList.stream()
+                .filter(subject -> !subjectNames.contains(subject))
+                .collect(Collectors.toList());
 
 
-            //삭제하려고 하는 과목
-            List<String> subjectDelete = subjectCheckList.stream()
-                    .filter(subject -> !subjectNames.contains(subject))
-                    .collect(Collectors.toList());
+        if (!subjectDelete.isEmpty()) {
+            studentSubjectRepository.deleteSubject(studentNumber, subjectDelete);
+        }
 
+        //프론트에는 있는데 db에는 없는 과목 (추가하려고 하는 과목)
+        List<String> subjectList = subjectNames.stream()
+                .filter(subject -> !subjectCheckList.contains(subject))
+                .collect(Collectors.toList());
 
-            if (!subjectDelete.isEmpty()) {
-                studentSubjectRepository.deleteSubject(studentNumber, subjectDelete);
+        Map<String, SubjectEntity> subjectMap = subjectEntities.stream()
+                .collect(Collectors.toMap(SubjectEntity::getSubjectName, Function.identity()));
+
+        List<StudentSubjectEntity> saveList = new ArrayList<>();
+
+        for (String subjectName : subjectList) {
+            SubjectEntity subjectEntity = subjectMap.get(subjectName);
+
+            if (subjectEntity == null) {
+                return false;
             }
 
-            //프론트에는 있는데 db에는 없는 과목 (추가하려고 하는 과목)
-            List<String> subjectList = subjectNames.stream()
-                    .filter(subject -> !subjectCheckList.contains(subject))
-                    .collect(Collectors.toList());
+            StudentSubjectDTO studentSubjectDTO = new StudentSubjectDTO();
+            studentSubjectDTO.setSubjectName(subjectName);
+            studentSubjectDTO.setStudentNumber(studentNumber);
 
-
-            Map<String, SubjectEntity> subjectMap = subjectEntities.stream()
-                    .collect(Collectors.toMap(SubjectEntity::getSubjectName, Function.identity()));
-
-            List<StudentSubjectEntity> saveList = new ArrayList<>();
-
-            for (String subjectName : subjectList) {
-                SubjectEntity subjectEntity = subjectMap.get(subjectName);
-
-                if (subjectEntity == null) {
-                    return false;
-                }
-                StudentSubjectDTO studentSubjectDTO = new StudentSubjectDTO();
-                studentSubjectDTO.setSubjectName(subjectName);
-                studentSubjectDTO.setStudentNumber(studentNumber);
-
-
-                StudentSubjectEntity studentSubjectEntity = StudentSubjectEntity.toStudentSubjectEntity(studentSubjectDTO);
-                studentSubjectEntity.setSubjectEntity(subjectEntity);
-                saveList.add(studentSubjectEntity);
-
-            }
-
-            studentSubjectRepository.saveAll(saveList);
-            return true;
+            StudentSubjectEntity studentSubjectEntity = StudentSubjectEntity.toStudentSubjectEntity(studentSubjectDTO);
+            studentSubjectEntity.setSubjectEntity(subjectEntity);
+            saveList.add(studentSubjectEntity);
 
         }
-        catch (Exception e) {
-            return false;
-        }
+
+        studentSubjectRepository.saveAll(saveList);
+        return true;
 
     }
+
+
 
     //수강하고 있는 과목 조회
     public List<String> getGraduationSubjectList(List<GraduationCheckDTO> list) {
@@ -246,12 +241,6 @@ public class GraduationCheckService {
             map.put("복수전공 필수","불충족");
         }
 
-
         return map;
     }
-
-
-
-
-
 }

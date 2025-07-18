@@ -6,11 +6,14 @@ import com.example.Capstone_Design.entity.EmailAuth;
 import com.example.Capstone_Design.entity.UserEntity;
 import com.example.Capstone_Design.repository.EmailAuthRepository;
 import com.example.Capstone_Design.repository.UserRepository;
+import com.example.Capstone_Design.service.EmailAuthService;
 import com.example.Capstone_Design.service.MailService;
 import com.example.Capstone_Design.service.UserService;
 import lombok.RequiredArgsConstructor;
 //import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.actuate.autoconfigure.observation.ObservationProperties;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -31,61 +34,53 @@ import lombok.extern.slf4j.Slf4j;
 public class UserController {
     private final UserService userService;
     private final MailService mailService;
-    private final EmailAuthRepository emailAuthRepository; // ✅ 인증 DB 접근용
-    private final UserRepository userRepository;
+    private final EmailAuthService emailAuthService;
 
 
     @PostMapping("/register")
     public ResponseEntity<?> register(@RequestBody UserDTO userDTO) {
-        System.out.println("✅ 받은 비밀번호: " + userDTO.getPwd());
-        String email = userDTO.getUserID();  // 아이디 = 이메일
 
-        if (userDTO.getPwd() == null || !userDTO.getPwd().equals(userDTO.getPasswordCheck())) {
-            return ResponseEntity.badRequest().body("비밀번호가 일치하지 않습니다.");
+        try{
+            Map<String, Object> response = userService.register_2(userDTO);
+
+            if(!(boolean) response.get("success")) {
+                return ResponseEntity.badRequest().body(response);
+            }
+            return ResponseEntity.ok().body(response);
         }
-
-        if (userService.existsByUserID(userDTO.getUserID())) {
-            return ResponseEntity.badRequest().body("이미 가입된 이메일입니다.");
+        catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
         }
-
-        List<EmailAuth> authList = emailAuthRepository.findAllByEmailOrderByCreatedAtDesc(userDTO.getUserID());
-        if (authList.isEmpty() || !authList.get(0).isVerified()) {
-            return ResponseEntity.badRequest().body("이메일 인증이 완료되지 않았습니다.");
-        }
-
-        userService.save(userDTO);
-        return ResponseEntity.ok( Collections.singletonMap("message","회원가입 성공") );
     }
 
 
     @PostMapping("/send-code")
     public ResponseEntity<Map<String, Object>> sendEmailCode(@RequestBody Map<String, String> request) {
         String email = request.get("email");
-
         Map<String, Object> response = new HashMap<>();
+        try {
+            response = userService.checkEmail(email);
 
-        if (userService.existsByUserID(email)) {
-            response.put("success", false);
-            response.put("message", "이미 가입된 이메일입니다.");
-            return ResponseEntity.badRequest().body(response);
+            if(!(boolean) response.get("success")) {
+                return ResponseEntity.badRequest().body(response);
+            }
+
+            String code = UUID.randomUUID().toString().substring(0, 6);
+
+            mailService.sendVerificationEmail(email, code);
+            emailAuthService.emailAuthSave(email, code);
+
+            response.put("success", true);
+            response.put("message", "인증 메일이 발송되었습니다.");
+
+            return ResponseEntity.ok(response);
         }
+        catch (Exception e) {
+            response.put("success", false);
+            response.put("message", e.getMessage());
 
-        String code = UUID.randomUUID().toString().substring(0, 6);
-
-        log.info("✅ 생성된 인증 코드: {}", code);
-
-        mailService.sendVerificationEmail(email, code);
-
-        EmailAuth auth = EmailAuth.builder()
-                .email(email)
-                .code(code)
-                .createdAt(LocalDateTime.now())
-                .verified(false)
-                .build();
-        emailAuthRepository.save(auth);
-        response.put("success", true);
-        response.put("message", "인증 메일이 발송되었습니다.");
-        return ResponseEntity.ok(response);
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response);
+        }
     }
 
     @PostMapping("/verify-code")
@@ -95,52 +90,50 @@ public class UserController {
 
         Map<String, Object> response = new HashMap<>();
 
-        List<EmailAuth> authList = emailAuthRepository.findAllByEmailOrderByCreatedAtDesc(email);
-        if (authList.isEmpty()) {
-            response.put("verified", false);
-            response.put("message", "이메일 정보가 없습니다.");
-            return ResponseEntity.badRequest().body(response);
+        try {
+            response = userService.verifyEmailCode_2(email, code);
+
+            if(!(boolean) response.get("success")) {
+                return ResponseEntity.badRequest().body(response);
+            }
+            return ResponseEntity.ok().body(response);
         }
+        catch (Exception e) {
+            response.put("success", false);
+            response.put("message", e.getMessage());
 
-        EmailAuth auth = authList.get(0);
-        if (auth.isVerified()) {
-            response.put("verified", false);
-            response.put("message", "이미 인증된 사용자입니다.");
-            return ResponseEntity.badRequest().body(response);
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response);
         }
-
-        if (!auth.getCode().equals(code)) {
-            response.put("verified", false);
-            response.put("message", "인증 코드가 일치하지 않습니다.");
-            return ResponseEntity.badRequest().body(response);
-        }
-
-        auth.setVerified(true);
-        emailAuthRepository.save(auth);
-
-        response.put("verified", true);
-        response.put("message", "이메일 인증이 완료되었습니다!");
-        return ResponseEntity.ok(response);
     }
 
 
     @GetMapping("/mypage/user")
-    public ResponseEntity<MyPageResponse> getMyPageUser(@AuthenticationPrincipal UserDetails userDetails) {
+    public ResponseEntity<?> getMyPageUser(@AuthenticationPrincipal UserDetails userDetails) {
 
-        String userID = userDetails.getUsername();
+        try{
+            String userID = userDetails.getUsername();
 
-        MyPageResponse myPageResponse = userService.getMyPageUser(userID);
-        return ResponseEntity.ok(myPageResponse);
+            MyPageResponse myPageResponse = userService.getMyPageUser_2(userID);
+            return ResponseEntity.ok(myPageResponse);
+        }
+        catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
+        }
+
     }
 
 
 
     @GetMapping("/user/me")
     public ResponseEntity<?> getCurrentUser(@AuthenticationPrincipal UserDetails userDetails) {
-        UserEntity user = userRepository.findByUserID(userDetails.getUsername()).orElseThrow();
-        UserDTO userDTO = UserDTO.toUserDTO(user);
 
-        return ResponseEntity.ok(userDTO);
+        try{
+            UserDTO userDTO = userService.getCurrentUser_2(userDetails);
+            return ResponseEntity.ok(userDTO);
+        }
+        catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
+        }
     }
 }
 

@@ -5,8 +5,11 @@ import com.example.Capstone_Design.entity.EmailAuth;
 import com.example.Capstone_Design.entity.UserEntity;
 import com.example.Capstone_Design.repository.EmailAuthRepository;
 import com.example.Capstone_Design.repository.UserRepository;
+import com.example.Capstone_Design.service.EmailAuthService;
+import com.example.Capstone_Design.service.FindPasswordService;
 import com.example.Capstone_Design.service.MailService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
@@ -22,49 +25,39 @@ import java.util.*;
 @RequiredArgsConstructor
 public class FindPasswordController {
 
-    private final UserRepository userRepository;
-    private final EmailAuthRepository emailAuthRepository;
-    private final PasswordEncoder passwordEncoder;
     private final MailService mailService;
-
+    private final FindPasswordService findPasswordService;
+    private final EmailAuthService emailAuthService;
     /**
      * 비밀번호 재설정용 인증코드 이메일 전송
      */
     @PostMapping("/find-send-code")
     public ResponseEntity<Map<String, Object>> sendResetCode(@RequestBody UserDTO userDTO) {
-        //System.out.println("🔥 받은 userID = " + userDTO.getUserID()); 확인용
-        Map<String, Object> response = new HashMap<>();
 
         String email = userDTO.getUserID();  // 아이디 = 이메일
+        Map<String, Object> response = findPasswordService.sendResetCode_2(email);
 
-        // DB에서 userID가 존재하는지 확인
-        Optional<UserEntity> userOpt = userRepository.findById(email);  // userID가 PK인 경우
-
-        if (userOpt.isEmpty()) {
-            response.put("success", false);
-            response.put("message", "가입되지 않은 이메일입니다.");
-            return ResponseEntity.badRequest().body(response);
+        if(!(Boolean) response.get("success")) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
         }
 
         // 인증 코드 생성
         String code = UUID.randomUUID().toString().substring(0, 6);
-
         // 이메일 전송
-        mailService.sendPasswordVerificationEmail(email, code);  // email = userID
 
-        // 인증 정보 저장
-        EmailAuth auth = EmailAuth.builder()
-                .email(email)
-                .code(code)
-                .createdAt(LocalDateTime.now())
-                .verified(false)
-                .build();
+        try {
+            mailService.sendPasswordVerificationEmail(email, code);  // email = userID
+            emailAuthService.emailAuthSave(email, code);
 
-        emailAuthRepository.save(auth);
+            response.put("success", true);
+            response.put("message", "인증코드를 이메일로 보냈습니다.");
+            return ResponseEntity.ok(response);
+        }
+        catch (Exception e) {
+            response.put("success", false);
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(Collections.singletonMap("error", e.getMessage()));
+        }
 
-        response.put("success", true);
-        response.put("message", "인증코드를 이메일로 보냈습니다.");
-        return ResponseEntity.ok(response);
     }
 
     /**
@@ -72,36 +65,20 @@ public class FindPasswordController {
      */
     @PostMapping("/password-verify-code")
     public ResponseEntity<Map<String, Object>> verifyCode(@RequestBody Map<String, String> request) {
-        Map<String, Object> response = new HashMap<>();
+
         String email = request.get("email");
         String code = request.get("code");
 
-        List<EmailAuth> authList = emailAuthRepository.findAllByEmailOrderByCreatedAtDesc(email);
-        if (authList.isEmpty()) {
-            response.put("success", false);
-            response.put("message", "이메일 정보가 없습니다.");
-            return ResponseEntity.badRequest().body(response);
+        try{
+            Map<String, Object> response = findPasswordService.verifyCode_2(email, code);
+            if(!(Boolean) response.get("success")) {
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
+            }
+            return ResponseEntity.ok(response);
         }
-
-        EmailAuth auth = authList.get(0);
-        if (auth.isVerified()) {
-            response.put("success", false);
-            response.put("message", "이미 인증이 완료된 이메일입니다.");
-            return ResponseEntity.badRequest().body(response);
+        catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(Collections.singletonMap("error", e.getMessage()));
         }
-
-        if (!auth.getCode().equals(code)) {
-            response.put("success", false);
-            response.put("message", "인증코드가 일치하지 않습니다.");
-            return ResponseEntity.badRequest().body(response);
-        }
-
-        auth.setVerified(true);
-        emailAuthRepository.save(auth);
-
-        response.put("success", true);
-        response.put("message", "인증이 완료되었습니다.");
-        return ResponseEntity.ok(response);
     }
 
     /**
@@ -109,41 +86,22 @@ public class FindPasswordController {
      */
     @PostMapping("/reset")
     public ResponseEntity<Map<String, Object>> resetPassword(@RequestBody Map<String, String> request) {
-        Map<String, Object> response = new HashMap<>();
+
         String email = request.get("email");
         String newPassword = request.get("newPassword");
         String confirmPassword = request.get("confirmPassword");
 
-        // 비밀번호 일치 확인
-        if (newPassword == null || confirmPassword == null || !newPassword.equals(confirmPassword)) {
-            response.put("success", false);
-            response.put("message", "비밀번호와 비밀번호 확인이 일치하지 않습니다.");
-            return ResponseEntity.badRequest().body(response);
+        try{
+            Map<String, Object> response = findPasswordService.resetPassword_2(email, newPassword, confirmPassword);
+
+            if(!(Boolean) response.get("success")) {
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
+            }
+            return ResponseEntity.ok(response);
+        }
+        catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(Collections.singletonMap("error", e.getMessage()));
         }
 
-        // 인증 여부 확인
-        List<EmailAuth> authList = emailAuthRepository.findAllByEmailOrderByCreatedAtDesc(email);
-        if (authList.isEmpty() || !authList.get(0).isVerified()) {
-            response.put("success", false);
-            response.put("message", "이메일 인증이 완료되지 않았습니다.");
-            return ResponseEntity.badRequest().body(response);
-        }
-
-        // 비밀번호 변경
-        Optional<UserEntity> userOpt = userRepository.findById(email);
-        if (userOpt.isEmpty()) {
-            response.put("success", false);
-            response.put("message", "가입된 사용자 정보를 찾을 수 없습니다.");
-            return ResponseEntity.badRequest().body(response);
-        }
-
-        UserEntity user = userOpt.get();
-        String encryptedPwd = passwordEncoder.encode(newPassword);
-        user.setPwd(encryptedPwd);
-        userRepository.save(user);
-
-        response.put("success", true);
-        response.put("message", "비밀번호가 성공적으로 변경되었습니다.");
-        return ResponseEntity.ok(response);
     }
 }
