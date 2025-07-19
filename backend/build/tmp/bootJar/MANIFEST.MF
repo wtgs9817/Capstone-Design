@@ -8,5 +8,5 @@ Spring-Boot-Classpath-Index: BOOT-INF/classpath.idx
 Spring-Boot-Layers-Index: BOOT-INF/layers.idx
 Build-Jdk-Spec: 17
 Implementation-Title: Capstone-Design
-Implementation-Version: 1.0.0-beta.1
+Implementation-Version: 1.0.0-beta.2
 
