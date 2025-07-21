@@ -2,13 +2,7 @@ package com.example.Capstone_Design.controller;
 
 import com.example.Capstone_Design.dto.BoardDTO;
 import com.example.Capstone_Design.dto.BoardRequest;
-import com.example.Capstone_Design.entity.BoardEntity;
-import com.example.Capstone_Design.entity.BoardLikeEntity;
-import com.example.Capstone_Design.entity.UserEntity;
-import com.example.Capstone_Design.repository.BoardLikeRepository;
-import com.example.Capstone_Design.repository.BoardRepository;
-import com.example.Capstone_Design.repository.CommentRepository;
-import com.example.Capstone_Design.repository.UserRepository;
+
 import com.example.Capstone_Design.service.BoardLikeService;
 import com.example.Capstone_Design.service.BoardService;
 import lombok.RequiredArgsConstructor;
@@ -18,8 +12,7 @@ import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 
-import java.time.LocalDateTime;
-import java.time.ZoneId;
+
 import java.util.Collections;
 import java.util.List;
 

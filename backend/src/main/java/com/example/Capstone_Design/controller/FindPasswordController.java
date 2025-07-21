@@ -1,21 +1,16 @@
 package com.example.Capstone_Design.controller;
 
 import com.example.Capstone_Design.dto.UserDTO;
-import com.example.Capstone_Design.entity.EmailAuth;
-import com.example.Capstone_Design.entity.UserEntity;
-import com.example.Capstone_Design.repository.EmailAuthRepository;
-import com.example.Capstone_Design.repository.UserRepository;
+
 import com.example.Capstone_Design.service.EmailAuthService;
 import com.example.Capstone_Design.service.FindPasswordService;
 import com.example.Capstone_Design.service.MailService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.web.bind.annotation.*;
-import java.util.Optional;
 
-import java.time.LocalDateTime;
+import org.springframework.web.bind.annotation.*;
+
 import java.util.*;
 
 

@@ -1,12 +1,12 @@
 package com.example.Capstone_Design.service;
 
-import com.example.Capstone_Design.dto.UserDTO;
+
 import com.example.Capstone_Design.entity.EmailAuth;
 import com.example.Capstone_Design.entity.UserEntity;
 import com.example.Capstone_Design.repository.EmailAuthRepository;
 import com.example.Capstone_Design.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.ResponseEntity;
+
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 

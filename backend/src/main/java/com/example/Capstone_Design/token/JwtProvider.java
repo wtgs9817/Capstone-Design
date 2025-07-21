@@ -13,7 +13,7 @@ import org.springframework.stereotype.Component;
 import io.jsonwebtoken.*;
 
 import javax.crypto.SecretKey;
-import io.jsonwebtoken.*;
+
 
 import java.nio.charset.StandardCharsets;
 import java.util.Date;

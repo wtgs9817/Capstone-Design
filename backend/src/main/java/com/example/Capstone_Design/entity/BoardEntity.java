@@ -1,6 +1,6 @@
 package com.example.Capstone_Design.entity;
 
-import com.example.Capstone_Design.dto.BoardDTO;
+
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.*;

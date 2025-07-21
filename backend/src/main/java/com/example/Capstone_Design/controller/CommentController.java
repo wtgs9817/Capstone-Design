@@ -2,14 +2,7 @@ package com.example.Capstone_Design.controller;
 
 import com.example.Capstone_Design.dto.CommentDTO;
 import com.example.Capstone_Design.dto.CommentRequest;
-import com.example.Capstone_Design.entity.BoardEntity;
-import com.example.Capstone_Design.entity.CommentEntity;
-import com.example.Capstone_Design.entity.CommentLikeEntity;
-import com.example.Capstone_Design.entity.UserEntity;
-import com.example.Capstone_Design.repository.BoardRepository;
-import com.example.Capstone_Design.repository.CommentLikeRepository;
-import com.example.Capstone_Design.repository.CommentRepository;
-import com.example.Capstone_Design.repository.UserRepository;
+
 import com.example.Capstone_Design.service.CommentLikeService;
 import com.example.Capstone_Design.service.CommentService;
 import lombok.RequiredArgsConstructor;
@@ -19,10 +12,9 @@ import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 
-import java.time.LocalDateTime;
-import java.time.ZoneId;
+
 import java.util.List;
-import java.util.Map;
+
 
 @RestController
 @RequestMapping("/api/comments")

@@ -2,28 +2,19 @@ package com.example.Capstone_Design.controller;
 
 import com.example.Capstone_Design.dto.MyPageResponse;
 import com.example.Capstone_Design.dto.UserDTO;
-import com.example.Capstone_Design.entity.EmailAuth;
-import com.example.Capstone_Design.entity.UserEntity;
-import com.example.Capstone_Design.repository.EmailAuthRepository;
-import com.example.Capstone_Design.repository.UserRepository;
+
 import com.example.Capstone_Design.service.EmailAuthService;
 import com.example.Capstone_Design.service.MailService;
 import com.example.Capstone_Design.service.UserService;
 import lombok.RequiredArgsConstructor;
-//import org.apache.logging.log4j.Logger;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.actuate.autoconfigure.observation.ObservationProperties;
+
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.stereotype.Controller;
-import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.bind.annotation.*;
-import org.springframework.ui.Model;
 
-import java.beans.Transient;
-import java.time.LocalDateTime;
+import org.springframework.web.bind.annotation.*;
+
 import java.util.*;
 
 import lombok.extern.slf4j.Slf4j;

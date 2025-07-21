@@ -8,8 +8,7 @@ import com.example.Capstone_Design.repository.BoardLikeRepository;
 import com.example.Capstone_Design.repository.BoardRepository;
 import com.example.Capstone_Design.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
+
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
