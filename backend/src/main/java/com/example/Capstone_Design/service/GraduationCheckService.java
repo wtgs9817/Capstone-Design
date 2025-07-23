@@ -114,7 +114,7 @@ public class GraduationCheckService {
     @Transactional
     public boolean studentSubjectSave(String studentNumber, List<String> subjectNames) {
 
-        //프론트에서 받아온 저장하기 위한 과목(db에 저장된 과목명과 일치하는 과목만 list 에 저장)
+        //프론트엔드에서 받아온 과목데이터 중 DB에 존재하는 데이터를 List에 저장
         List<SubjectEntity> subjectEntities = subjectRepository.findAllBySubjectNameIn(subjectNames);
 
         //현재 db에 저장되어 있는 수강과목
@@ -125,12 +125,12 @@ public class GraduationCheckService {
         Map<String, SubjectEntity> subjectMap = subjectEntities.stream()
                 .collect(Collectors.toMap(SubjectEntity::getSubjectName, Function.identity()));
 
+        //프론트에서 받아온 데이터 중 잘못된 데이터 필터링
         for(String subjectName : subjectNames) {
             if(!subjectMap.containsKey(subjectName)) {
-                return false;
+                throw new RuntimeException("과목명  " + subjectName + "은(는) DB에 존재하지 않습니다.");
             }
         }
-
 
         Set<String> subjectCheckSet = new HashSet<>(subjectCheckList);
         Set<String> subjectNameSet = new HashSet<>(subjectNames);
@@ -145,20 +145,13 @@ public class GraduationCheckService {
                 .filter(subject -> !subjectCheckSet.contains(subject))
                 .collect(Collectors.toList());
 
-
+        //과목 삭제
         if (!subjectDelete.isEmpty()) {
             studentSubjectRepository.deleteSubject(studentNumber, subjectDelete);
         }
-
+        //과목 저장
         for (String subjectName : subjectList) {
-            SubjectEntity subjectEntity = subjectMap.get(subjectName);
-
-            if (subjectEntity == null) {
-                throw new RuntimeException("프론트엔드에서 온 과목명과 DB에 존재하는 과목명이 일치하지 않습니다.");
-            }
-
             studentSubjectRepository.saveSubjects(studentNumber,subjectName);
-
         }
         return true;
     }
