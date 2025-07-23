@@ -6,9 +6,9 @@ import com.example.Capstone_Design.Exception.MajorCodeNotFoundException;
 import com.example.Capstone_Design.dto.GraduationCheckDTO;
 import com.example.Capstone_Design.dto.GraduationCheckResponse;
 import com.example.Capstone_Design.dto.MajorDTO;
-import com.example.Capstone_Design.dto.StudentSubjectDTO;
+
 import com.example.Capstone_Design.entity.MajorEntity;
-import com.example.Capstone_Design.entity.StudentSubjectEntity;
+
 import com.example.Capstone_Design.entity.SubjectEntity;
 import com.example.Capstone_Design.repository.MajorRepository;
 import com.example.Capstone_Design.repository.StudentSubjectRepository;
@@ -114,7 +114,7 @@ public class GraduationCheckService {
     //과목 저장
     public boolean studentSubjectSave(String studentNumber, List<String> subjectNames) {
 
-        //프론트에서 받아온 저장하기 위한 과목
+        //프론트에서 받아온 저장하기 위한 과목(db에 저장된 과목명과 일치하는 과목만 list 에 저장)
         List<SubjectEntity> subjectEntities = subjectRepository.findAllBySubjectNameIn(subjectNames);
 
         //현재 db에 저장되어 있는 수강과목
@@ -122,25 +122,33 @@ public class GraduationCheckService {
                 .map(GraduationCheckDTO::getSubjectName)
                 .collect(Collectors.toList());
 
-        //삭제하려고 하는 과목
-        List<String> subjectDelete = subjectCheckList.stream()
-                .filter(subject -> !subjectNames.contains(subject))
+        Map<String, SubjectEntity> subjectMap = subjectEntities.stream()
+                .collect(Collectors.toMap(SubjectEntity::getSubjectName, Function.identity()));
+
+        for(String subjectName : subjectNames) {
+            if(!subjectMap.containsKey(subjectName)) {
+                return false;
+            }
+        }
+
+
+        Set<String> subjectCheckSet = new HashSet<>(subjectCheckList);
+        Set<String> subjectNameSet = new HashSet<>(subjectNames);
+
+        //삭제해야 할 과목
+        List<String> subjectDelete = subjectCheckSet.stream()
+                .filter(subject -> !subjectNameSet.contains(subject))
+                .collect(Collectors.toList());
+
+        //저장해야 할 과목
+        List<String> subjectList = subjectNameSet.stream()
+                .filter(subject -> !subjectCheckSet.contains(subject))
                 .collect(Collectors.toList());
 
 
         if (!subjectDelete.isEmpty()) {
             studentSubjectRepository.deleteSubject(studentNumber, subjectDelete);
         }
-
-        //프론트에는 있는데 db에는 없는 과목 (추가하려고 하는 과목)
-        List<String> subjectList = subjectNames.stream()
-                .filter(subject -> !subjectCheckList.contains(subject))
-                .collect(Collectors.toList());
-
-        Map<String, SubjectEntity> subjectMap = subjectEntities.stream()
-                .collect(Collectors.toMap(SubjectEntity::getSubjectName, Function.identity()));
-
-        List<StudentSubjectEntity> saveList = new ArrayList<>();
 
         for (String subjectName : subjectList) {
             SubjectEntity subjectEntity = subjectMap.get(subjectName);
@@ -149,21 +157,12 @@ public class GraduationCheckService {
                 return false;
             }
 
-            StudentSubjectDTO studentSubjectDTO = new StudentSubjectDTO();
-            studentSubjectDTO.setSubjectName(subjectName);
-            studentSubjectDTO.setStudentNumber(studentNumber);
+            studentSubjectRepository.saveSubjects(studentNumber,subjectName);
 
-            StudentSubjectEntity studentSubjectEntity = StudentSubjectEntity.toStudentSubjectEntity(studentSubjectDTO);
-            studentSubjectEntity.setSubjectEntity(subjectEntity);
-            saveList.add(studentSubjectEntity);
 
         }
-
-        studentSubjectRepository.saveAll(saveList);
         return true;
-
     }
-
 
 
     //수강하고 있는 과목 조회

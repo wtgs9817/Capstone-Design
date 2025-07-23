@@ -16,8 +16,12 @@ spring:
     properties:
       hibernate:
         format_sql: true
+        order_inserts: true
+        order_updates: true
         jdbc:
           time_zone: Asia/Seoul
+          batch_size: 50
+
     database-platform: org.hibernate.dialect.MySQL8Dialect
 
   mail:
@@ -35,6 +39,8 @@ spring:
       org.springframework.security: DEBUG
       org.springframework.security.web.FilterChainProxy: DEBUG
       org.springframework.boot.actuate.endpoint.web: DEBUG
+      org.hibernate.SQL: debug
+      org.hibernate.type.descriptor.sql.BasicBinder: trace
 
 
 

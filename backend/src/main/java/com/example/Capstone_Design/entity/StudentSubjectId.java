@@ -5,10 +5,7 @@ package com.example.Capstone_Design.entity;
 
 
 import jakarta.persistence.Embeddable;
-import lombok.EqualsAndHashCode;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
 import java.io.Serializable;
 
@@ -16,6 +13,7 @@ import java.io.Serializable;
 @Setter
 @Embeddable
 @NoArgsConstructor
+@AllArgsConstructor
 @EqualsAndHashCode
 public class StudentSubjectId implements Serializable {
 

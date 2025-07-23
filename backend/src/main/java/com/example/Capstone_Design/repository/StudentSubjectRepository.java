@@ -54,5 +54,9 @@ public interface StudentSubjectRepository extends JpaRepository<StudentSubjectEn
 
 
 
+
+    @Modifying
+    @Query(value = "INSERT INTO student_subject (student_number, subject_name) VALUES (:studentNumber, :subjectName)", nativeQuery = true)
+    void saveSubjects(@Param("studentNumber") String studentNumber, @Param("subjectName") String subjectName);
 }
 
