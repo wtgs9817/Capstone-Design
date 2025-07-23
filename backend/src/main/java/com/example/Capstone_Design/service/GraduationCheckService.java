@@ -110,8 +110,8 @@ public class GraduationCheckService {
         return majorDTO.getMajorCode();
     }
 
-    @Transactional
     //과목 저장
+    @Transactional
     public boolean studentSubjectSave(String studentNumber, List<String> subjectNames) {
 
         //프론트에서 받아온 저장하기 위한 과목(db에 저장된 과목명과 일치하는 과목만 list 에 저장)
@@ -154,11 +154,10 @@ public class GraduationCheckService {
             SubjectEntity subjectEntity = subjectMap.get(subjectName);
 
             if (subjectEntity == null) {
-                return false;
+                throw new RuntimeException("프론트엔드에서 온 과목명과 DB에 존재하는 과목명이 일치하지 않습니다.");
             }
 
             studentSubjectRepository.saveSubjects(studentNumber,subjectName);
-
 
         }
         return true;

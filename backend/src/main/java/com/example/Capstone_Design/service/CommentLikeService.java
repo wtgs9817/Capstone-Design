@@ -22,7 +22,7 @@ public class CommentLikeService {
     private final CommentRepository commentRepository;
     private final UserRepository userRepository;
 
-    @Transactional
+
     public int likeComment_2(Long id, UserDetails userDetails) {
 
         CommentEntity comment = commentRepository.findById(id).orElseThrow(() -> new RuntimeException("해당 댓글은 존재하지 않습니다."));
@@ -41,7 +41,7 @@ public class CommentLikeService {
 
         return 1;
     }
-    @Transactional
+
     public void unlikeComment_2(Long id, UserDetails userDetails) {
 
         CommentEntity comment = commentRepository.findById(id).orElseThrow(() -> new RuntimeException("해당 댓글은 존재하지 않습니다."));

@@ -51,7 +51,7 @@ public class BoardService {
         return result;
     }
 
-    @Transactional
+
     public void createBoard_2(BoardRequest request, UserDetails userDetails) {
 
         UserEntity user = userRepository.findByUserID(userDetails.getUsername()).orElseThrow();
@@ -63,7 +63,7 @@ public class BoardService {
         boardRepository.save(boardEntity);
     }
 
-    @Transactional
+
     public int updateBoard_2(BoardRequest request, UserDetails userDetails, Long id) {
 
         BoardEntity boardEntity = boardRepository.findById(id)
@@ -85,7 +85,7 @@ public class BoardService {
 
     }
 
-    @Transactional
+
     public int deleteBoard_2(Long id, UserDetails userDetails) {
         BoardEntity boardEntity = boardRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("해당 게시글이 존재하지 않습니다."));

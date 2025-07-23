@@ -45,6 +45,24 @@ public class BoardLikeService {
 
     }
 
+
+    // ✅ @Transactional 사용 시기 정리
+
+    // 1. 단순히 save() 또는 delete() 하나만 호출하는 경우는
+    //    Spring Data JPA 내부에서 트랜잭션을 자동 처리하므로 생략 가능하다.
+
+    // 2. 그러나 Service 계층에서 조회, 조건검사, 가공 등 다른 로직과
+    //    저장(save), 수정(update), 삭제(delete)가 함께 있다면
+    //    반드시 @Transactional을 명시해줘야 한다.
+
+    // 3. 이유는, 저장은 자동으로 커밋되더라도 앞이나 뒤 로직에서 예외가 발생하면
+    //    전체를 롤백해야 데이터 정합성을 유지할 수 있기 때문이다.
+
+    // 4. 트랜잭션은 "DB 작업 단위"가 아니라 "비즈니스 로직 단위"로 묶는 것이 바람직하다.
+    //    따라서 트랜잭션 경계는 Repository가 아닌 Service 계층에서 관리해야 한다.
+
+    // 5. 결론적으로, 실무에서는 대부분의 Service 계층 메서드에
+    //    @Transactional을 붙이는 것이 안전하고 권장되는 설계 방식이다.
     @Transactional
     public void unlikeBoard_2(Long id, UserDetails userDetails) {
 

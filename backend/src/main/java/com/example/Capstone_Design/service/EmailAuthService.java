@@ -15,7 +15,7 @@ import java.time.LocalDateTime;
 public class EmailAuthService {
     private final EmailAuthRepository emailAuthRepository;
 
-    @Transactional
+
     public void emailAuthSave(String email, String code) {
 
         EmailAuth emailAuth = EmailAuth.builder().email(email).code(code)
