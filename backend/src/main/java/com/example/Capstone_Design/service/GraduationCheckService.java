@@ -6,17 +6,15 @@ import com.example.Capstone_Design.Exception.MajorCodeNotFoundException;
 import com.example.Capstone_Design.dto.GraduationCheckDTO;
 import com.example.Capstone_Design.dto.GraduationCheckResponse;
 import com.example.Capstone_Design.dto.MajorDTO;
-
 import com.example.Capstone_Design.entity.MajorEntity;
-
 import com.example.Capstone_Design.entity.SubjectEntity;
 import com.example.Capstone_Design.repository.MajorRepository;
+import com.example.Capstone_Design.repository.StudentSubjectBatchRepository;
 import com.example.Capstone_Design.repository.StudentSubjectRepository;
 import com.example.Capstone_Design.repository.SubjectRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
 
 import java.util.*;
 import java.util.function.Function;
@@ -29,7 +27,7 @@ public class GraduationCheckService {
     private final StudentSubjectRepository studentSubjectRepository;
     private final MajorRepository majorRepository;
     private final SubjectRepository subjectRepository;
-
+    private final StudentSubjectBatchRepository studentSubjectBatchRepository;
 
     // 학과별 수강하는 과목 전체 총점
     public int totalSubjectScore(String studentNumber) {
@@ -109,29 +107,84 @@ public class GraduationCheckService {
 
         return majorDTO.getMajorCode();
     }
-
     //과목 저장
     @Transactional
     public boolean studentSubjectSave(String studentNumber, List<String> subjectNames) {
 
+        Set<String> subjectNameSet = new HashSet<>(subjectNames);
+
         //프론트엔드에서 받아온 과목데이터 중 DB에 존재하는 데이터를 List에 저장
-        List<SubjectEntity> subjectEntities = subjectRepository.findAllBySubjectNameIn(subjectNames);
+        List<SubjectEntity> subjectEntities = subjectRepository.findAllBySubjectNameIn(subjectNameSet);
+
+        Map<String, SubjectEntity> subjectMap = subjectEntities.stream()
+                .collect(Collectors.toMap(SubjectEntity::getSubjectName, Function.identity()));
+
+
+        Set<String> invalidSubjectNames = subjectNameSet.stream()
+                .filter(name -> !subjectMap.containsKey(name))
+                .collect(Collectors.toSet());
+
+        if(!invalidSubjectNames.isEmpty()) {
+            throw new RuntimeException("과목명  " + invalidSubjectNames + "은(는) DB에 존재하지 않습니다.");
+        }
 
         //현재 db에 저장되어 있는 수강과목
         List<String> subjectCheckList = studentSubjectRepository.getSubjects(studentNumber).stream()
                 .map(GraduationCheckDTO::getSubjectName)
                 .collect(Collectors.toList());
 
-        Map<String, SubjectEntity> subjectMap = subjectEntities.stream()
-                .collect(Collectors.toMap(SubjectEntity::getSubjectName, Function.identity()));
 
-        //프론트에서 받아온 데이터 중 잘못된 데이터 필터링
-        for(String subjectName : subjectNames) {
-            if(!subjectMap.containsKey(subjectName)) {
-                throw new RuntimeException("과목명  " + subjectName + "은(는) DB에 존재하지 않습니다.");
+        //삭제해야 할 과목
+        List<String> subjectDelete = subjectCheckList.stream()
+                .filter(subject -> !subjectNameSet.contains(subject))
+                .collect(Collectors.toList());
+
+        //저장해야 할 과목
+        List<String> subjectList = subjectNameSet.stream()
+                .filter(subject -> !subjectCheckList.contains(subject))
+                .collect(Collectors.toList());
+
+        //과목 삭제
+        if (!subjectDelete.isEmpty()) {
+            studentSubjectRepository.deleteSubjects(studentNumber, subjectDelete);
+        }
+
+        //과목 저장
+        if(!subjectList.isEmpty()) {
+            studentSubjectBatchRepository.saveSubjects(studentNumber, subjectList);
+        }
+
+        return true;
+
+        /*  jpa 로 사용했을 때 (속도가 너무 느림. 전에 어떤 방식을 했는 지 확인하기 위해서 지우지 않았음.)
+
+        if(!subjectDelete.isEmpty()) {
+            for (String subjectName : subjectDelete) {
+
+                studentSubjectRepository.deleteById(new StudentSubjectId(studentNumber, subjectName));
             }
         }
 
+        List<StudentSubjectEntity> saveSubjects = new ArrayList<>();
+        if(!subjectList.isEmpty()) {
+            for (String subject : subjectList) {
+
+                StudentSubjectId studentSubjectId = new StudentSubjectId();
+                studentSubjectId.setStudentNumber(studentNumber);
+                StudentSubjectEntity studentSubjectEntity = new StudentSubjectEntity(studentSubjectId, subjectMap.get(subject));
+
+                saveSubjects.add(studentSubjectEntity);
+            }
+        }
+        studentSubjectRepository.saveAll(saveSubjects);
+
+
+        return true;
+        */
+
+
+
+        /*
         Set<String> subjectCheckSet = new HashSet<>(subjectCheckList);
         Set<String> subjectNameSet = new HashSet<>(subjectNames);
 
@@ -145,15 +198,24 @@ public class GraduationCheckService {
                 .filter(subject -> !subjectCheckSet.contains(subject))
                 .collect(Collectors.toList());
 
-        //과목 삭제
-        if (!subjectDelete.isEmpty()) {
-            studentSubjectRepository.deleteSubject(studentNumber, subjectDelete);
+
+        if(!subjectDelete.isEmpty()) {
+            for (String subjectName : subjectDelete) {
+
+                studentSubjectRepository.deleteById(new StudentSubjectId(studentNumber, subjectName));
+            }
         }
-        //과목 저장
-        for (String subjectName : subjectList) {
-            studentSubjectRepository.saveSubjects(studentNumber,subjectName);
+
+        if(!subjectList.isEmpty()) {
+            for (String subjectName : subjectList) {
+                StudentSubjectEntity studentSubjectEntity = new StudentSubjectEntity(new StudentSubjectId(studentNumber, subjectName), new SubjectEntity());
+
+                studentSubjectRepository.save(studentSubjectEntity);
+            }
         }
+
         return true;
+*/
     }
 
 

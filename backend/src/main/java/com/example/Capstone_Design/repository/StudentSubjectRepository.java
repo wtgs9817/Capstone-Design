@@ -44,19 +44,13 @@ public interface StudentSubjectRepository extends JpaRepository<StudentSubjectEn
             "WHERE sse.studentSubjectId.studentNumber = :studentNumber ")
     List<GraduationCheckDTO> getSubjects(@Param("studentNumber") String studentNumber);
 
-    @Modifying  // JPA 에서는 DELETE가 DML 이므로 필수로 붙여줘야 함.
+    @Modifying  // JPA 에서 JPQL 또는 Native SQL 로 DELETE 작업시에 붙여줘야 함.
     //프론트에서 체크해제한 과목이 db에 있으면 삭제
     @Query("DELETE FROM StudentSubjectEntity s " +
             "WHERE s.studentSubjectId.studentNumber = :studentNumber " +
             "AND s.studentSubjectId.subjectName IN :subjectNames")
-    void deleteSubject(@Param("studentNumber") String studentNumber,
+    void deleteSubjects(@Param("studentNumber") String studentNumber,
                                               @Param("subjectNames") List<String> subjectNames);
 
-
-
-
-    @Modifying
-    @Query(value = "INSERT INTO student_subject (student_number, subject_name) VALUES (:studentNumber, :subjectName)", nativeQuery = true)
-    void saveSubjects(@Param("studentNumber") String studentNumber, @Param("subjectName") String subjectName);
 }
 
