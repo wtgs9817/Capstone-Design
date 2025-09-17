@@ -10,10 +10,12 @@ import com.example.Capstone_Design.repository.EmailAuthRepository;
 import com.example.Capstone_Design.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.time.Duration;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -25,7 +27,7 @@ public class UserService {
     private final UserRepository userRepository; // jpa, MySQL dependency 추가
     private final PasswordEncoder passwordEncoder; // ✅ 비밀번호 암호화용
     private final EmailAuthRepository emailAuthRepository;
-
+    private final RedisTemplate<String, Object> redisTemplate;
 
     public UserEntity login(String userID, String rawPassword) {
         UserEntity user = userRepository.findById(userID)
@@ -42,11 +44,18 @@ public class UserService {
         if(userID == null || userID.isBlank()) {
             throw new BadRequestException("userID이 정상적으로 넘어오지 않음.");
         }
+        String key = "user:" + userID;
+
+        Object cached = redisTemplate.opsForValue().get(key);
+        if(cached != null) {
+            return (UserDTO) cached;
+        }
 
         UserEntity user = userRepository.findByUserID(userID).orElseThrow(() -> new UserNotFoundException("입력하신 회원이 존재하지 않습니다."));
+        UserDTO userDTO = UserDTO.toUserDTO(user);
 
-        return UserDTO.toUserDTO(user);
-
+        redisTemplate.opsForValue().set(key, userDTO, Duration.ofMinutes(30));
+        return userDTO;
     }
 
     public Map<String, Object> register_2(UserDTO userDTO) {

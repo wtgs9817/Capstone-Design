@@ -22,8 +22,9 @@ import java.util.*;
 @RequiredArgsConstructor
 public class GraduationCheckController {
 
-    final GraduationCheckService graduationCheckService;
-    final UserService userService;
+    private final GraduationCheckService graduationCheckService;
+    private final UserService userService;
+
 
 
     //주전공,복수전공 총학점 리턴
@@ -61,14 +62,13 @@ public class GraduationCheckController {
             List<GraduationCheckDTO> allList = graduationCheckService.graduationSubject(majorCode);
             List<GraduationCheckDTO> checkList = graduationCheckService.graduationCheck(user.getStudentNumber(), majorCode);
 
-            List<GraduationCheckResponse> list = graduationCheckService.getSubjectCheckList(allList, checkList);
+            List<GraduationCheckResponse> list = graduationCheckService.getSubjectCheckList(allList, checkList, user.getStudentNumber(), majorCode);
 
             return ResponseEntity.ok(list);
         }
         catch(Exception e){
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
         }
-
     }
 
 
@@ -85,7 +85,7 @@ public class GraduationCheckController {
             List<GraduationCheckDTO> allList = graduationCheckService.graduationSubject(majorCode);
             List<GraduationCheckDTO> checkList = graduationCheckService.graduationCheck(user.getStudentNumber(), majorCode);
 
-            List<GraduationCheckResponse> list = graduationCheckService.getSubjectCheckList(allList, checkList);
+            List<GraduationCheckResponse> list = graduationCheckService.getSubjectCheckList(allList, checkList, user.getStudentNumber(), majorCode);
 
             return ResponseEntity.ok(list);
         }
@@ -126,7 +126,7 @@ public class GraduationCheckController {
             String studentNumber = user.getStudentNumber();
             List<String> subjectNames = request.getSubjects();
 
-            boolean saveFlag = graduationCheckService.studentSubjectSave(studentNumber, subjectNames);
+            boolean saveFlag = graduationCheckService.studentSubjectSave(studentNumber, subjectNames, user);
 
             if(!saveFlag) {
                 return ResponseEntity.badRequest().body("DB에 존재하는 과목명과 일치하지 않습니다.");

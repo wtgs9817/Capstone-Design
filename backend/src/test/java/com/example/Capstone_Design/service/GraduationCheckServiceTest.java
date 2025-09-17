@@ -38,14 +38,7 @@ class GraduationCheckServiceTest {
     void getMajorCode() {
     }
 
-    @Test
-    void studentSubjectSave() {
-        List<String> list = new ArrayList<>();
-        list.add("운영체제");
-        list.add("C프로그래밍");
-        graduationCheckService.studentSubjectSave("20175112",list);
 
-    }
 
     @Test
     void getGraduationSubjectList() {

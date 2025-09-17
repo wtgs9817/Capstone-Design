@@ -6,6 +6,7 @@ import com.example.Capstone_Design.Exception.MajorCodeNotFoundException;
 import com.example.Capstone_Design.dto.GraduationCheckDTO;
 import com.example.Capstone_Design.dto.GraduationCheckResponse;
 import com.example.Capstone_Design.dto.MajorDTO;
+import com.example.Capstone_Design.dto.UserDTO;
 import com.example.Capstone_Design.entity.MajorEntity;
 import com.example.Capstone_Design.entity.SubjectEntity;
 import com.example.Capstone_Design.repository.MajorRepository;
@@ -13,9 +14,11 @@ import com.example.Capstone_Design.repository.StudentSubjectBatchRepository;
 import com.example.Capstone_Design.repository.StudentSubjectRepository;
 import com.example.Capstone_Design.repository.SubjectRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.Duration;
 import java.util.*;
 import java.util.function.Function;
 import java.util.stream.Collectors;
@@ -29,11 +32,22 @@ public class GraduationCheckService {
     private final SubjectRepository subjectRepository;
     private final StudentSubjectBatchRepository studentSubjectBatchRepository;
 
+    private final RedisTemplate<String, Object> redisTemplate;
+
+
     // 학과별 수강하는 과목 전체 총점
     public int totalSubjectScore(String studentNumber) {
+        String key = "totalSubjectScore:" + studentNumber;
+
+        Object cached = redisTemplate.opsForValue().get(key);
+        if (cached != null) {
+            return Integer.parseInt(cached.toString());
+        }
+
         Integer score = studentSubjectRepository.totalSubjectScore(studentNumber);
         int result = score == null ? 0 : score;
 
+        redisTemplate.opsForValue().set(key, String.valueOf(result), Duration.ofMinutes(30));
         return result;
     }
 
@@ -57,7 +71,14 @@ public class GraduationCheckService {
 
 
     //필수과목 자가진단
-    public List<GraduationCheckResponse> getSubjectCheckList(List<GraduationCheckDTO> allList, List<GraduationCheckDTO> checkList) {
+    public List<GraduationCheckResponse> getSubjectCheckList(List<GraduationCheckDTO> allList, List<GraduationCheckDTO> checkList, String studentNumber, String majorCode) {
+
+        String key = "graduation:check:" + studentNumber + ":" + majorCode;
+        Object cached = redisTemplate.opsForValue().get(key);
+
+        if(cached != null) {
+            return (List<GraduationCheckResponse>) cached;
+        }
 
         Set<String> subjectCodes = new HashSet<>();
 
@@ -73,13 +94,23 @@ public class GraduationCheckService {
                         subjectCodes.contains(dto.getSubjectCode())
                 )).collect(Collectors.toList());
 
-        return list;
+        redisTemplate.opsForValue().set(key, list, Duration.ofMinutes(30));
 
+        return list;
     }
 
     //각 과마다 졸업에 필요한 전공필수 과목
     public List<GraduationCheckDTO> graduationSubject(String majorCode) {
+        String key = "subject:all:" + majorCode;
+
+        Object cache = redisTemplate.opsForValue().get(key);
+
+        if(cache != null) {
+            return (List<GraduationCheckDTO>) cache;
+        }
+
         List<GraduationCheckDTO> graduationCheckDTO = studentSubjectRepository.graduationSubject(majorCode);
+        redisTemplate.opsForValue().set(key, graduationCheckDTO, Duration.ofHours(12));
 
         return graduationCheckDTO;
     }
@@ -87,8 +118,15 @@ public class GraduationCheckService {
 
     // 학생이 수강하는 전공필수 과목 조회
     public List<GraduationCheckDTO> graduationCheck(String studentNumber, String majorCode) {
-        List<GraduationCheckDTO> graduationCheckDTO = studentSubjectRepository.graduationCheck(studentNumber, majorCode);
+        String key ="subject:check:" + studentNumber + ":" + majorCode;
 
+        Object cache = redisTemplate.opsForValue().get(key);
+        if(cache != null) {
+            return (List<GraduationCheckDTO>) cache;
+        }
+
+        List<GraduationCheckDTO> graduationCheckDTO = studentSubjectRepository.graduationCheck(studentNumber, majorCode);
+        redisTemplate.opsForValue().set(key, graduationCheckDTO, Duration.ofMinutes(30));
         return graduationCheckDTO;
     }
 
@@ -99,17 +137,25 @@ public class GraduationCheckService {
             throw new BadRequestException("프론트엔드에서 major가 정상적으로 넘어오지 않음.");
         }
 
+        String key = "major:" + major;
+        Object cached = redisTemplate.opsForValue().get(key);
+
+        if(cached != null) {
+            return (String) cached;
+        }
 
         MajorEntity majorEntity = majorRepository.findByMajor(major).orElseThrow( ()-> new MajorCodeNotFoundException("입력하신 학과에 대한 학과코드가 존재하지 않습니다.") );
 
         MajorDTO majorDTO = new MajorDTO();
         majorDTO.setMajorCode(majorEntity.getMajorCode());
 
+        redisTemplate.opsForValue().set(key, majorDTO.getMajorCode(), Duration.ofMinutes(30));
+
         return majorDTO.getMajorCode();
     }
     //과목 저장
     @Transactional
-    public boolean studentSubjectSave(String studentNumber, List<String> subjectNames) {
+    public boolean studentSubjectSave(String studentNumber, List<String> subjectNames, UserDTO user) {
 
         Set<String> subjectNameSet = new HashSet<>(subjectNames);
 
@@ -153,6 +199,23 @@ public class GraduationCheckService {
         if(!subjectList.isEmpty()) {
             studentSubjectBatchRepository.saveSubjects(studentNumber, subjectList);
         }
+
+        String major = user.getMajor();
+        String scdMajor = user.getScdMajor();
+        String majorCode = getMajorCode(major);
+        String scdMajorCode = getMajorCode(scdMajor);
+
+        List<String> keys = Arrays.asList(
+                "totalSubjectScore:" + studentNumber,
+                "graduation:check:" + studentNumber + ":" + majorCode,
+                "graduation:check:" + studentNumber + ":" + scdMajorCode,
+                "subject:check:" + studentNumber + ":" + majorCode,
+                "subject:check:" + studentNumber + ":" + scdMajorCode,
+                "getSubjects:" + studentNumber,
+                "graduation:check:result:" + studentNumber + ":" + majorCode + ":" + scdMajorCode
+        );
+
+        redisTemplate.delete(keys);
 
         return true;
 
@@ -238,8 +301,14 @@ public class GraduationCheckService {
 
     //학생이 수강하는 과목 전체 조회
     public List<GraduationCheckDTO> getSubjects(String studentNumber) {
-        List<GraduationCheckDTO> list = studentSubjectRepository.getSubjects(studentNumber);
+        String key = "getSubjects:"+ studentNumber;
 
+        Object cached = redisTemplate.opsForValue().get(key);
+        if(cached != null) {
+            return (List<GraduationCheckDTO>) cached;
+        }
+
+        List<GraduationCheckDTO> list = studentSubjectRepository.getSubjects(studentNumber);
         return list;
     }
 
@@ -247,6 +316,14 @@ public class GraduationCheckService {
     public Map<String, String> getGraduationCheckResults(String studentNumber, String majorCode, String scdMajorCode) {
         List<GraduationCheckDTO> list = studentSubjectRepository.graduationCheck(studentNumber, majorCode);
         List<GraduationCheckDTO> list2 = studentSubjectRepository.graduationCheck(studentNumber, scdMajorCode);
+
+        String key = "graduation:check:result:" + studentNumber + ":" + majorCode + ":" + scdMajorCode;
+        Object cached = redisTemplate.opsForValue().get(key);
+
+        if(cached != null) {
+            return (Map<String, String>) cached;
+        }
+
 
         Map<String, String> map = new HashMap<>();
 
@@ -294,6 +371,7 @@ public class GraduationCheckService {
             map.put("복수전공 필수","불충족");
         }
 
+        redisTemplate.opsForValue().set(key, map, Duration.ofMinutes(30));
         return map;
     }
 }

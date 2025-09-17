@@ -8,6 +8,7 @@ import com.example.Capstone_Design.service.MailService;
 import com.example.Capstone_Design.service.UserService;
 import lombok.RequiredArgsConstructor;
 
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -15,6 +16,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 
 import org.springframework.web.bind.annotation.*;
 
+import java.time.Duration;
 import java.util.*;
 
 import lombok.extern.slf4j.Slf4j;
@@ -26,6 +28,8 @@ public class UserController {
     private final UserService userService;
     private final MailService mailService;
     private final EmailAuthService emailAuthService;
+
+    private final RedisTemplate<String, Object> redisTemplate;
 
 
     @PostMapping("/register")
@@ -117,9 +121,16 @@ public class UserController {
 
     @GetMapping("/user/me")
     public ResponseEntity<?> getCurrentUser(@AuthenticationPrincipal UserDetails userDetails) {
+        String key = "user:me:" + userDetails.getUsername();
+
+        Object cached = redisTemplate.opsForValue().get(key);
+        if(cached != null) {
+            return ResponseEntity.ok( (UserDTO) cached);
+        }
 
         try{
             UserDTO userDTO = userService.getCurrentUser_2(userDetails);
+            redisTemplate.opsForValue().set(key, userDTO, Duration.ofMinutes(60));
             return ResponseEntity.ok(userDTO);
         }
         catch (Exception e) {
