@@ -107,6 +107,7 @@ grafana로 시각화하여 정상 범위를 벗어난 이상 징후를 실시간
 - Java
 - Spring Boot 
 - Spring Data JPA
+- Redis 
 
 ### 🗄️ Database
 - MySQL
