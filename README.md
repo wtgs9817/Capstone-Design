@@ -6,8 +6,9 @@
 
 ---
 ### ⭐ update
+- 25/09/18 - Redis 추가
 - 25/06/16 - Spring Boot 모니터링 시스템 추가(prometheus + grafana)
-
+  
 
 ---
 
