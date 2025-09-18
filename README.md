@@ -154,7 +154,9 @@ grafana로 시각화하여 정상 범위를 벗어난 이상 징후를 실시간
 ---
 
 ### 프로젝트 구조도
-![캡스톤디자인_최종](https://github.com/user-attachments/assets/d9aeb0c3-83e2-446e-a942-7c10cd712be0)
+<img width="1651" height="541" alt="캡스톤디자인_진짜최종" src="https://github.com/user-attachments/assets/eb5e201e-50d2-40d6-8503-0e1a6a7fe610" />
+
+
 
 
 
