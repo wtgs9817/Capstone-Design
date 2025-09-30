@@ -1,5 +1,6 @@
 package com.example.Capstone_Design.service;
 
+import com.example.Capstone_Design.dto.UserDTO;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -13,6 +14,12 @@ class GraduationCheckServiceTest {
 
     @Autowired
     GraduationCheckService graduationCheckService;
+
+    @Autowired
+    UserService userService;
+
+
+
 
     @Test
     void totalSubjectScore() {
@@ -50,5 +57,10 @@ class GraduationCheckServiceTest {
 
     @Test
     void getGraduationCheckResults() {
+    }
+
+    @Test
+    void studentSubejctSave(){
+
     }
 }

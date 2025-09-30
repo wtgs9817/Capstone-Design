@@ -37,15 +37,7 @@ public class BoardService {
 
     private static final ZoneId SEOUL_ZONE = ZoneId.of("Asia/Seoul");
 
-    // 게시글 목록 조회
-    public List<BoardDTO> getAllBoards_2() {
-        String key = "board:all";
-
-        Object cached = boardRedisTemplate.opsForValue().get(key);
-        if (cached != null) {
-            return (List<BoardDTO>) cached;
-        }
-
+    public  List<BoardDTO> getAllBoards_111() {
         List<BoardDTO> result = boardRepository.findAll().stream().map(board -> {
             int commentCount = commentRepository.countByBoardId(board.getId());
             return new BoardDTO(
@@ -60,6 +52,20 @@ public class BoardService {
             );
         }).toList();
 
+        return result;
+    }
+
+
+    // 게시글 목록 조회
+    public List<BoardDTO> getAllBoards_2() {
+        String key = "board:all";
+
+        Object cached = boardRedisTemplate.opsForValue().get(key);
+        if (cached != null) {
+            return (List<BoardDTO>) cached;
+        }
+
+        List<BoardDTO> result = getAllBoards_111();
         boardRedisTemplate.opsForValue().set(key, result, Duration.ofMinutes(10));
 
         return result;
@@ -67,6 +73,8 @@ public class BoardService {
 
 
     public void createBoard_2(BoardRequest request, UserDetails userDetails) {
+        String key = "board:all";
+        boardRedisTemplate.delete(key);
 
         UserEntity user = userRepository.findByUserID(userDetails.getUsername()).orElseThrow();
         LocalDateTime now = LocalDateTime.now(SEOUL_ZONE);
@@ -75,6 +83,10 @@ public class BoardService {
                 .content(request.getContent()).user(user).likeCount(0).createdAt(now).updatedAt(now).build();
 
         boardRepository.save(boardEntity);
+
+        List<BoardDTO> boards = getAllBoards_111();
+        boardRedisTemplate.opsForValue().set(key, boards, Duration.ofMinutes(10));
+
     }
 
 
@@ -102,6 +114,9 @@ public class BoardService {
 
         boardRedisTemplate.delete(keys);
 
+        List<BoardDTO> boards = getAllBoards_111();
+        boardRedisTemplate.opsForValue().set(keys.get(0), boards, Duration.ofMinutes(10));
+
         return 1;
 
     }
@@ -125,6 +140,9 @@ public class BoardService {
                     //"board:" + id
             );
             boardRedisTemplate.delete(keys);
+
+            List<BoardDTO> boards = getAllBoards_111();
+            boardRedisTemplate.opsForValue().set(keys.get(0), boards, Duration.ofMinutes(10));
 
             return 1;
         }

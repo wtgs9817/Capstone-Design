@@ -47,7 +47,7 @@ public class GraduationCheckService {
         Integer score = studentSubjectRepository.totalSubjectScore(studentNumber);
         int result = score == null ? 0 : score;
 
-        redisTemplate.opsForValue().set(key, String.valueOf(result), Duration.ofMinutes(30));
+        redisTemplate.opsForValue().set(key, String.valueOf(result), Duration.ofMinutes(60));
         return result;
     }
 
@@ -94,8 +94,7 @@ public class GraduationCheckService {
                         subjectCodes.contains(dto.getSubjectCode())
                 )).collect(Collectors.toList());
 
-        redisTemplate.opsForValue().set(key, list, Duration.ofMinutes(30));
-
+        redisTemplate.opsForValue().set(key, list, Duration.ofMinutes(60));
         return list;
     }
 
@@ -126,7 +125,8 @@ public class GraduationCheckService {
         }
 
         List<GraduationCheckDTO> graduationCheckDTO = studentSubjectRepository.graduationCheck(studentNumber, majorCode);
-        redisTemplate.opsForValue().set(key, graduationCheckDTO, Duration.ofMinutes(30));
+        redisTemplate.opsForValue().set(key, graduationCheckDTO, Duration.ofMinutes(60));
+
         return graduationCheckDTO;
     }
 
@@ -149,13 +149,32 @@ public class GraduationCheckService {
         MajorDTO majorDTO = new MajorDTO();
         majorDTO.setMajorCode(majorEntity.getMajorCode());
 
-        redisTemplate.opsForValue().set(key, majorDTO.getMajorCode(), Duration.ofMinutes(30));
+        redisTemplate.opsForValue().set(key, majorDTO.getMajorCode(), Duration.ofMinutes(60));
 
         return majorDTO.getMajorCode();
     }
     //과목 저장
     @Transactional
     public boolean studentSubjectSave(String studentNumber, List<String> subjectNames, UserDTO user) {
+
+        //기존 캐시 삭제
+        String major = user.getMajor();
+        String scdMajor = user.getScdMajor();
+        String majorCode = getMajorCode(major);
+        String scdMajorCode = getMajorCode(scdMajor);
+
+        List<String> keys = Arrays.asList(
+                "totalSubjectScore:" + studentNumber,
+                "graduation:check:" + studentNumber + ":" + majorCode,
+                "graduation:check:" + studentNumber + ":" + scdMajorCode,
+                "subject:check:" + studentNumber + ":" + majorCode,
+                "subject:check:" + studentNumber + ":" + scdMajorCode,
+                "getSubjects:" + studentNumber,
+                "graduation:check:result:" + studentNumber + ":" + majorCode + ":" + scdMajorCode
+        );
+
+        redisTemplate.delete(keys);
+
 
         Set<String> subjectNameSet = new HashSet<>(subjectNames);
 
@@ -200,22 +219,16 @@ public class GraduationCheckService {
             studentSubjectBatchRepository.saveSubjects(studentNumber, subjectList);
         }
 
-        String major = user.getMajor();
-        String scdMajor = user.getScdMajor();
-        String majorCode = getMajorCode(major);
-        String scdMajorCode = getMajorCode(scdMajor);
 
-        List<String> keys = Arrays.asList(
-                "totalSubjectScore:" + studentNumber,
-                "graduation:check:" + studentNumber + ":" + majorCode,
-                "graduation:check:" + studentNumber + ":" + scdMajorCode,
-                "subject:check:" + studentNumber + ":" + majorCode,
-                "subject:check:" + studentNumber + ":" + scdMajorCode,
-                "getSubjects:" + studentNumber,
-                "graduation:check:result:" + studentNumber + ":" + majorCode + ":" + scdMajorCode
-        );
+        //임시 코드 개선이 필요할듯
+        redisTemplate.opsForValue().set(keys.get(0), String.valueOf(totalSubjectScore(studentNumber)), Duration.ofMinutes(60));
+        redisTemplate.opsForValue().set(keys.get(1),getSubjectCheckList(graduationSubject(majorCode), graduationCheck(studentNumber, majorCode), studentNumber, majorCode) , Duration.ofMinutes(60));
+        redisTemplate.opsForValue().set(keys.get(2),getSubjectCheckList(graduationSubject(scdMajorCode), graduationCheck(studentNumber, scdMajorCode), studentNumber, scdMajorCode) , Duration.ofMinutes(60));
+        redisTemplate.opsForValue().set(keys.get(3), graduationCheck(studentNumber, majorCode), Duration.ofMinutes(60));
+        redisTemplate.opsForValue().set(keys.get(4), graduationCheck(studentNumber, scdMajorCode), Duration.ofMinutes(60));
+        redisTemplate.opsForValue().set(keys.get(5), getSubjects(studentNumber) , Duration.ofMinutes(60));
+        redisTemplate.opsForValue().set(keys.get(6), getGraduationCheckResults(studentNumber, majorCode, scdMajorCode)  , Duration.ofMinutes(60));
 
-        redisTemplate.delete(keys);
 
         return true;
 
@@ -309,6 +322,8 @@ public class GraduationCheckService {
         }
 
         List<GraduationCheckDTO> list = studentSubjectRepository.getSubjects(studentNumber);
+        redisTemplate.opsForValue().set(key, list, Duration.ofMinutes(60));
+
         return list;
     }
 
@@ -371,7 +386,7 @@ public class GraduationCheckService {
             map.put("복수전공 필수","불충족");
         }
 
-        redisTemplate.opsForValue().set(key, map, Duration.ofMinutes(30));
+        redisTemplate.opsForValue().set(key, map, Duration.ofMinutes(60));
         return map;
     }
 }
