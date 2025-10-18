@@ -189,6 +189,7 @@ grafana로 시각화하여 정상 범위를 벗어난 이상 징후를 실시간
 - GitHub (협업 및 버전 관리)
 - Notion (프로젝트 진행 일지)
 - VS Code / IntelliJ (개발 환경)
+- nGrinder (성능 테스트)
 
 ---
 
