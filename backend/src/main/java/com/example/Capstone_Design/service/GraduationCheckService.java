@@ -314,15 +314,16 @@ public class GraduationCheckService {
 
     //학생이 수강하는 과목 전체 조회
     public List<GraduationCheckDTO> getSubjects(String studentNumber) {
+        /*
         String key = "getSubjects:"+ studentNumber;
 
         Object cached = redisTemplate.opsForValue().get(key);
         if(cached != null) {
             return (List<GraduationCheckDTO>) cached;
         }
-
+        */
         List<GraduationCheckDTO> list = studentSubjectRepository.getSubjects(studentNumber);
-        redisTemplate.opsForValue().set(key, list, Duration.ofMinutes(60));
+        //redisTemplate.opsForValue().set(key, list, Duration.ofMinutes(60));
 
         return list;
     }

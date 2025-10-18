@@ -33,6 +33,7 @@ public class BoardService {
     private final BoardLikeRepository boardLikeRepository;
 
     private final RedisTemplate<String, Object> boardRedisTemplate;
+    private final RedisTemplate<String, Object> redisTemplate;
 
 
     private static final ZoneId SEOUL_ZONE = ZoneId.of("Asia/Seoul");
@@ -66,7 +67,7 @@ public class BoardService {
         }
 
         List<BoardDTO> result = getAllBoards_111();
-        boardRedisTemplate.opsForValue().set(key, result, Duration.ofMinutes(10));
+        boardRedisTemplate.opsForValue().set(key, result, Duration.ofMinutes(6));
 
         return result;
     }
@@ -160,9 +161,21 @@ public class BoardService {
         }
 
          */
+        String key = "boardlike:count:" + id;
+        Object cached = redisTemplate.opsForValue().get(key);
 
         BoardEntity boardEntity = boardRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("해당 게시글이 존재하지 않습니다."));
+
+        if(cached != null) {
+            int likeCount = Integer.parseInt(cached.toString());
+            if(likeCount != boardEntity.getLikeCount()) {
+                boardEntity.setLikeCount(likeCount);
+            }
+        }
+        else {
+            redisTemplate.opsForValue().set(key, boardEntity.getLikeCount(), Duration.ofMinutes(5));
+        }
 
         int commentCount = commentRepository.countByBoardId(boardEntity.getId());
         BoardDTO boardDTO = BoardDTO.toBoardDTO(boardEntity, commentCount);

@@ -1,0 +1,42 @@
+2025-10-18 06:29:29,593 INFO  Setting of nGrinder local DNS successfully
+2025-10-18 06:29:29,605 INFO  The Grinder version 3.9.1
+2025-10-18 06:29:29,614 INFO  OpenJDK Runtime Environment 11.0.22+7-LTS: OpenJDK 64-Bit Server VM (11.0.22+7-LTS, mixed mode) on Linux amd64 5.15.167.4-microsoft-standard-WSL2
+2025-10-18 06:29:29,626 INFO  time zone is UTC (+0000)
+2025-10-18 06:29:29,863 INFO  worker process 0 of agent number 0
+2025-10-18 06:29:29,917 INFO  Instrumentation agents: byte code transforming instrumenter for Java
+2025-10-18 06:29:32,498 INFO  registered plug-in net.grinder.plugin.http.HTTPPlugin
+2025-10-18 06:29:32,661 INFO  before process.
+2025-10-18 06:29:32,665 INFO  Running "LikeCount_Test.groovy" using GroovyScriptEngine running with groovy version: 3.0.5
+2025-10-18 06:29:32,826 INFO  before thread.
+2025-10-18 06:29:32,827 INFO  starting, will do 1 run
+2025-10-18 06:29:32,828 INFO  Start time is 1760768972827 ms since Epoch
+2025-10-18 06:29:32,850 INFO  before. init headers and cookies
+2025-10-18 06:29:34,416 INFO  http://172.19.0.2:8080/api/board/101/like?userID=20175112%40hallym.ac.kr -> 200 , 23 bytes
+2025-10-18 06:29:34,424 INFO  DELETE 좋아요 취소 응답코드: 200 (userID=20175112@hallym.ac.kr)
+2025-10-18 06:29:34,463 INFO  before. init headers and cookies
+2025-10-18 06:29:34,824 INFO  http://172.19.0.2:8080/api/board/101/like?userID=20175112%40hallym.ac.kr -> 200 , 16 bytes
+2025-10-18 06:29:34,824 INFO  POST 좋아요 응답코드: 200 (userID=20175112@hallym.ac.kr)
+2025-10-18 06:29:34,825 INFO  finished 1 run
+2025-10-18 06:29:34,829 INFO  elapsed time is 2002 ms
+2025-10-18 06:29:34,830 INFO  Final statistics for this process:
+2025-10-18 06:29:34,845 INFO  
+             Tests        Errors       Mean Test    Test Time    TPS          Mean         Response     Response     Mean time to Mean time to Mean time to 
+                                       Time (ms)    Standard                  response     bytes per    errors       resolve host establish    first byte   
+                                                    Deviation                 length       second                                 connection                
+                                                    (ms)                                                                                                    
+
+Test 1       1            0            359.00       0.00         0.50         16.00        7.99         0            0.00         1.00         1.00          "좋아요 추가"
+Test 2       1            0            1605.00      0.00         0.50         23.00        11.49        0            0.00         32.00        1439.00       "좋아요 취소"
+
+Totals       2            0            982.00       623.00       1.00         19.50        19.48        0            0.00         16.50        720.00       
+
+  Tests resulting in error only contribute to the Errors column.          
+  Statistics for individual tests can be found in the data file, including
+  (possibly incomplete) statistics for erroneous tests. Composite tests   
+  are marked with () and not included in the totals.                      
+
+
+
+Picked up JAVA_TOOL_OPTIONS: -Dfile.encoding=UTF-8
+2025-10-18 06:29:32,674 INFO  validation-0: Starting threads
+2025-10-18 06:29:34,846 INFO  validation-0: Finished

@@ -1,0 +1,55 @@
+PLAIN
+K 11
+targetHosts
+V 0
+
+K 9
+validated
+V 1
+0
+END
+ENDREP
+id: 0-4.0.r13/59
+type: file
+pred: 0-4.0.r12/109
+count: 7
+text: 12 0 24 2551 a27c17deb15e77d189227c076eefa93d f5f17df2fedbef9d077eca9caa2581ef306b6074 12-c/_1
+props: 13 0 46 46 536bcf2a8ad0af566c24c817dde35b51
+cpath: /LikeCount_Test.groovy
+copyroot: 0 /
+
+PLAIN
+K 14
+.gitconfig.yml
+V 17
+file 0-1.0.r1/346
+K 21
+LikeCount_Test.groovy
+V 17
+file 0-4.0.r13/59
+K 11
+Test.groovy
+V 17
+file 0-2.0.r2/902
+K 23
+getAllBoard_Test.groovy
+V 16
+file 0-3.0.r3/59
+K 16
+get_Board.groovy
+V 16
+file 0-7.0.r8/62
+END
+ENDREP
+id: 0.0.r13/558
+type: dir
+pred: 0.0.r12/610
+count: 13
+text: 13 313 232 232 2907bf7aba997ab49c9b2bcaf19c9a04
+cpath: /
+copyroot: 0 /
+
+0-4.0.t12-c modify-file true true /LikeCount_Test.groovy
+
+
+558 690

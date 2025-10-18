@@ -3,9 +3,9 @@ services:
   backend:
     image: redis-test-capston-design-backend
     container_name: redis-test-capston-design-backend
-    expose:
-      - "8080"
-      - "9999"
+    ports:  ##export
+      - "8080:8080"
+      - "9999:9999"
     networks:
       - capston-design-network
 

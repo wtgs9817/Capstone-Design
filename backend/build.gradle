@@ -48,6 +48,8 @@ dependencies {
 	implementation 'io.micrometer:micrometer-registry-prometheus'
 
 	implementation 'org.springframework.boot:spring-boot-starter-data-redis'
+	implementation 'org.redisson:redisson-spring-boot-starter:3.27.2' // 최신 안정 버전 기준
+
 	implementation 'com.fasterxml.jackson.datatype:jackson-datatype-jsr310'
 
 

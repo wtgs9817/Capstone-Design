@@ -1,0 +1,63 @@
+PLAIN
+K 11
+targetHosts
+V 0
+
+K 9
+validated
+V 5
+false
+END
+ENDREP
+id: 0-20.0.r49/63
+type: file
+pred: 0-20.0.r48/63
+count: 21
+text: 46 0 978 2427 c52c42dd3fdbb3b1c84f547488807d42 d8312c80420ad4e7981305a4a9011f8f06e5082a 48-1c/_1
+props: 49 0 50 50 9451ec6176239ace09c05a5d0190e9e9
+cpath: /get_subjects.groovy
+copyroot: 0 /
+
+PLAIN
+K 14
+.gitconfig.yml
+V 17
+file 0-1.0.r1/346
+K 21
+LikeCount_Test.groovy
+V 18
+file 0-4.0.r45/120
+K 11
+Test.groovy
+V 17
+file 0-2.0.r2/902
+K 23
+getAllBoard_Test.groovy
+V 17
+file 0-3.0.r42/63
+K 16
+get_Board.groovy
+V 17
+file 0-7.0.r44/59
+K 19
+get_subjects.groovy
+V 18
+file 0-20.0.r49/63
+K 20
+save_subjects.groovy
+V 18
+file 0-16.0.r19/63
+END
+ENDREP
+id: 0.0.r49/666
+type: dir
+pred: 0.0.r48/666
+count: 49
+text: 49 319 334 334 6e56a988a2dbb45e4d01e64bc1e913d8
+cpath: /
+copyroot: 0 /
+
+0-20.0.t48-1c modify-file true true /get_subjects.groovy
+
+
+666 798

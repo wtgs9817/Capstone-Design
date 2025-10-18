@@ -51,7 +51,8 @@ public class SecurityConfig {
                                 "/api/verify-code",
                                 "/api/find-send-code",
                                 "/api/password-verify-code",
-                                "/api/reset").permitAll()
+                                "/api/reset"
+                                ).permitAll()
                         .requestMatchers("/api/user/me").authenticated()
                         .requestMatchers("/api/board/*/like").authenticated()       // 수정
                         .requestMatchers("/api/comments/*/like").authenticated()    // 수정
