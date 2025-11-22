@@ -220,7 +220,7 @@ https://www.erdcloud.com/d/GY9Xrhxdv5uLzPhDA
 
 ---
 ### API 명세서
-https://www.notion.so/215093794d9780af93a5c95188562951?v=215093794d978017b619000c8b379007&source=copy_link
+[https://www.notion.so/215093794d9780af93a5c95188562951?v=215093794d978017b619000c8b379007&source=copy_link](https://soapy-tilapia-835.notion.site/215093794d9780af93a5c95188562951?v=215093794d978017b619000c8b379007)
 
 ![image](https://github.com/user-attachments/assets/f8991569-103a-43b9-be07-699efe374029)
 
