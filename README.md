@@ -65,43 +65,7 @@ grafana로 시각화하여 정상 범위를 벗어난 이상 징후를 실시간
    
 ---
 
-## 🧑‍💻 주요 기술 스택
 
-### 🖼️ Frontend
-- React
-- HTML / CSS / JavaScript
-- Figma (와이어프레임 설계)
-
-### 🧠 Backend
-- Java
-- Spring Boot 
-- Spring Data JPA
-- Redis 
-
-### 🗄️ Database
-- MySQL
-- AWS RDS
-- ERD 기반 설계
-
-### 🌐 인프라 / 배포
-- AWS EC2 (서버 배포)
-- Nginx (리버스 프록시 & 정적 리소스 서빙)
-- Docker (개발 환경 컨테이너화)
-
-### 🖥️ Monitoring
--  Spring Boot Actuator (애플리케이션 레벨 메트릭 수집)
--  nginx exporter (Nginx 웹 서버 상태 정보 수집)
--  node exporter (서버의 자원 메트릭 수집)
--  prometheus  (시계열 메트릭 수집 및 저장)
--  grafana  (수집한 메트릭 시각화)
-
-### 🧰 기타 도구
-- GitHub (협업 및 버전 관리)
-- Notion (프로젝트 진행 일지)
-- VS Code / IntelliJ (개발 환경)
-- nGrinder (성능 테스트)
-
----
 
 ### 프로젝트 구조도
 <img width="1001" height="617" alt="캡스톤디자인_진짜진짜로최종 drawio" src="https://github.com/user-attachments/assets/5ef75120-5b52-4674-85c1-7791172d533b" />
