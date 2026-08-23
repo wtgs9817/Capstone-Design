@@ -5,8 +5,8 @@ server:
 spring:
   datasource:
     driver-class-name: com.mysql.cj.jdbc.Driver
-    url: jdbc:mysql://capstone-design-db.cdmyweqqmmeq.ap-northeast-2.rds.amazonaws.com:3306/project_db?serverTimezone=Asia/Seoul&characterEncoding=UTF-8
-    username: wtgs9817
+    url: jdbc:mysql://host.docker.internal:3306/test-project-db?serverTimezone=Asia/Seoul&characterEncoding=UTF-8&rewriteBatchedStatements=true
+    username: root
     password: asdf1193
 
   data:

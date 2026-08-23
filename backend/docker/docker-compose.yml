@@ -1,11 +1,18 @@
-version: '3'
 services:
   backend:
+    build:
+      context: ../
+      dockerfile: docker/Dockerfile
     image: redis-test-capston-design-backend
     container_name: redis-test-capston-design-backend
     ports:  ##export
       - "8080:8080"
       - "9999:9999"
+    environment:
+      # application.properties의 spring.datasource.url 속성을 덮어씌움
+      - SPRING_DATASOURCE_URL=jdbc:mysql://host.docker.internal:3306/test-project-db?serverTimezone=Asia/Seoul&characterEncoding=UTF-8&rewriteBatchedStatements=true
+      - SPRING_DATASOURCE_USERNAME=root
+      - SPRING_DATASOURCE_PASSWORD=asdf1193
     networks:
       - capston-design-network
 
