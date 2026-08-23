@@ -1,0 +1,29 @@
+version: '3'
+services:
+  backend:
+    image: redis-test-capston-design-backend
+    container_name: redis-test-capston-design-backend
+    ports:  ##export
+      - "8080:8080"
+      - "9999:9999"
+    networks:
+      - capston-design-network
+
+    depends_on:
+      - redis
+
+  redis:
+    image: redis:7
+    container_name: capston-redis
+    ports:
+      - "6379:6379"
+    networks:
+      - capston-design-network
+
+
+networks:
+  capston-design-network:
+    external: true
+
+
+
